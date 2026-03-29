@@ -1,0 +1,1 @@
+Nutrifit is a minimalist, logic-driven health tracking interface designed to simplify the way users interact with dietary data. Unlike traditional fitness apps that overwhelm users with complex dashboards, Nutrifit focuses on reducing cognitive load and streamlining data entry.
