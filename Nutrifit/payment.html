@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Purchase - NutriFit</title>
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white">
+
+    <header class="bg-black/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-bebas tracking-wider text-violet-400">NutriFit</a>
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html#plans" class="text-gray-300 hover:text-violet-400 transition duration-300">Our Plans</a>
+                <a href="index.html#calculators" class="text-gray-300 hover:text-violet-400 transition duration-300">Calculators</a>
+                <a href="index.html#about" class="text-gray-300 hover:text-violet-400 transition duration-300">About</a>
+                <a href="index.html#contact" class="text-gray-300 hover:text-violet-400 transition duration-300">Contact</a>
+            </nav>
+            <div id="auth-buttons" class="auth-buttons flex items-center space-x-4">
+                <a id="login-btn" href="login.html" class="bg-gray-800 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-gray-700 transition duration-300">Login</a>
+                <a id="signup-btn" href="signup.html" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-violet-500 transition duration-300">Sign Up</a>
+                <a id="profile-btn" href="dashboard.html" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-violet-500 transition duration-300 hidden"><i class="fas fa-user-circle mr-2"></i>Profile</a>
+                <a id="logout-btn" href="#" class="bg-red-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-red-500 transition duration-300 btn-logout hidden"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+            <button class="md:hidden text-white"><i class="fas fa-bars text-2xl"></i></button>
+        </div>
+    </header>
+
+    <main class="py-32 min-h-screen">
+        <div class="container mx-auto px-6 pt-16">
+            <div class="max-w-md mx-auto bg-gray-800 p-8 rounded-2xl shadow-lg">
+                <h2 class="text-4xl font-bebas tracking-wider text-violet-400 text-center mb-6">Complete Your Purchase</h2>
+                
+                <div class="bg-gray-900 p-6 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-white mb-4">Order Summary</h3>
+                    <div class="flex justify-between text-gray-300 mb-2">
+                        <span>Plan:</span>
+                        <span id="plan-name" class="font-bold">Loading...</span>
+                    </div>
+                    <div class="flex justify-between text-gray-300">
+                        <span>Duration:</span>
+                        <span id="plan-duration" class="font-bold">Loading...</span>
+                    </div>
+                    <hr class="border-gray-700 my-4">
+                    <div class="flex justify-between text-white text-xl font-bold">
+                        <span>Total:</span>
+                        <span id="plan-price">Loading...</span>
+                    </div>
+                </div>
+
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label for="card-name" class="text-sm font-bold text-gray-300 block mb-2">Name on Card</label>
+                        <input type="text" id="card-name" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" value="Test User" required>
+                    </div>
+                    <div>
+                        <label for="card-number" class="text-sm font-bold text-gray-300 block mb-2">Card Number</label>
+                        <input type="text" id="card-number" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" value="4242 4242 4242 4242" required>
+                    </div>
+                    <p id="payment-error" class="text-red-500 text-sm hidden">Please log in to complete your purchase.</p>
+                    <button type="button" id="confirm-payment-btn" class="w-full bg-violet-600 text-white font-bold py-4 px-6 rounded-lg uppercase tracking-wider hover:bg-violet-500 transition duration-300">
+                        Confirm Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+      <footer class="bg-black border-t border-gray-800 py-16">
+        <div class="container mx-auto px-6 text-gray-400">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <a href="#" class="text-3xl font-bebas tracking-wider text-violet-400 mb-4 inline-block">NutriFit</a>
+                    <p class="text-sm">Personalized nutrition plans to help you look, feel, and perform your best. Start your journey with us today.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase tracking-wider mb-4">Our Services</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#plans" class="hover:text-violet-400 transition-colors">Basic Plan</a></li>
+                        <li><a href="#plans" class="hover:text-violet-400 transition-colors">Pro Plan</a></li>
+                        <li><a href="#plans" class="hover:text-violet-400 transition-colors">Premium Plan</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase tracking-wider mb-4">Resources</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="bmi-calculator.html" class="hover:text-violet-400 transition-colors">BMI Calculator</a></li>
+                        <li><a href="diet-calculator.html" class="hover:text-violet-400 transition-colors">Calorie Calculator</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">FAQs</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase tracking-wider mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#about" class="hover:text-violet-400 transition-colors">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-violet-400 transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-violet-400 transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="flex justify-center space-x-6 mt-12 pt-8 border-t border-gray-800">
+                <a href="#" class="hover:text-violet-400 transition duration-300"><i class="fab fa-twitter text-xl"></i></a>
+                <a href="#" class="hover:text-violet-400 transition duration-300"><i class="fab fa-instagram text-xl"></i></a>
+                <a href="#" class="hover:text-violet-400 transition duration-300"><i class="fab fa-facebook-f text-xl"></i></a>
+                <a href="#" class="hover:text-violet-400 transition duration-300"><i class="fab fa-github text-xl"></i></a>
+            </div>
+
+            <div class="text-center mt-8 pt-8 border-t border-gray-800">
+                <p class="text-sm">&copy; 2025 NutriFit. All Rights Reserved. Built as a demo project.</p>
+                <p class="text-xs mt-3 max-w-2xl mx-auto">
+                    **Disclaimer:** This website is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition or before undertaking any new diet or exercise program.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const planName = urlParams.get('plan');
+            const planPrice = urlParams.get('price');
+            const planDuration = urlParams.get('duration');
+
+            document.getElementById('plan-name').textContent = planName;
+            document.getElementById('plan-price').textContent = `$${planPrice}`;
+            document.getElementById('plan-duration').textContent = planDuration === 'onetime' ? 'Lifetime' : `${planDuration} Days`;
+            
+            const confirmBtn = document.getElementById('confirm-payment-btn');
+            const errorMsg = document.getElementById('payment-error');
+
+            confirmBtn.addEventListener('click', () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const currentUserJSON = localStorage.getItem('currentUser');
+                
+                if (!isLoggedIn || !currentUserJSON) {
+                    errorMsg.textContent = "Please log in to complete your purchase.";
+                    errorMsg.classList.remove('hidden');
+                    setTimeout(() => {
+                        // Save the payment URL details in the redirect
+                        window.location.href = `login.html?redirect=payment.html${window.location.search}`;
+                    }, 3000);
+                    return;
+                }
+                
+                const currentUser = JSON.parse(currentUserJSON);
+                const allUsers = JSON.parse(localStorage.getItem('nutriFitUsers')) || {};
+                
+                if (!allUsers[currentUser.email]) {
+                    errorMsg.textContent = "Error: User account not found. Please re-login.";
+                    errorMsg.classList.remove('hidden');
+                    return;
+                }
+
+                const startDate = new Date();
+                let endDate = 'Lifetime'; 
+
+                if (planDuration !== 'onetime') {
+                    const durationDays = parseInt(planDuration, 10);
+                    const endDateObj = new Date(startDate);
+                    endDateObj.setDate(startDate.getDate() + durationDays);
+                    endDate = endDateObj.toISOString().split('T')[0];
+                }
+
+                const planInfo = {
+                    planName: planName,
+                    price: planPrice,
+                    startDate: startDate.toISOString().split('T')[0],
+                    endDate: endDate
+                };
+
+                allUsers[currentUser.email].planInfo = planInfo;
+                localStorage.setItem('nutriFitUsers', JSON.stringify(allUsers));
+
+                window.location.href = 'dashboard.html';
+            });
+        });
+    </script>
+</body>
+</html>

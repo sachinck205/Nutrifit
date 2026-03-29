@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriFit - Your Dashboard</title>
+    <link rel="icon" type="image/png" href="Logo.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ============================
+         * Base & Font Styles
+         * ============================ */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000000; /* Black */
+            color: #f1f1f1;
+        }
+
+        .font-bebas {
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        /* ============================
+         * Custom Scrollbar
+         * ============================ */
+        ::-webkit-scrollbar { 
+            width: 8px; 
+            height: 8px; 
+        }
+        ::-webkit-scrollbar-track { 
+            background: #111827; /* Gray 900 */
+        }
+        ::-webkit-scrollbar-thumb { 
+            background: #374151; /* Gray 700 */
+            border-radius: 10px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { 
+            background: #4b5563; /* Gray 600 */
+        }
+        
+        /* ============================
+         * Sidebar Navigation
+         * ============================ */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            font-weight: 600; /* font-semibold */
+            color: #D1D5DB; /* text-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.2s ease-in-out;
+        }
+        .sidebar-link:hover {
+            background-color: #1F2937; /* bg-gray-800 */
+            color: #C4B5FD; /* text-violet-300 */
+        }
+        .sidebar-link.active {
+            background-color: #1F2937; /* bg-gray-800 */
+            color: #A78BFA; /* text-violet-400 */
+            box-shadow: inset 3px 0 0 #8B5CF6; /* Inset violet border */
+        }
+        .sidebar-link i {
+            width: 1.5rem; /* w-6 */
+            text-align: center;
+            margin-right: 1rem; /* ml-4 */
+            font-size: 1.1rem;
+        }
+        
+        /* Sidebar link for disabled (gated) features */
+        .sidebar-link.disabled {
+            color: #4B5563; /* text-gray-600 */
+            cursor: not-allowed;
+            background-color: transparent;
+            position: relative;
+        }
+        .sidebar-link.disabled:hover {
+             color: #4B5563; /* text-gray-600 */
+             background-color: transparent;
+        }
+        .sidebar-link.disabled .lock-icon {
+            display: inline-block;
+            margin-left: auto;
+            font-size: 0.8rem;
+        }
+        .sidebar-link .lock-icon {
+            display: none;
+        }
+        
+
+        /* ============================
+         * Main Content Page Sections
+         * ============================ */
+         .page-section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-in-out;
+         }
+         .page-section.active {
+            display: block; /* Shown when active */
+         }
+         
+         @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+         }
+
+        /* ============================
+         * Dashboard Widget Styles
+         * (From original NutriFit dashboard)
+         * ============================ */
+        .widget-link {
+            display: block;
+            padding: 1rem;
+            background-color: #374151; /* bg-gray-700 */
+            border-radius: 0.5rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .widget-link:hover {
+            background-color: #4b5563; /* bg-gray-600 */
+            transform: translateX(5px);
+        }
+
+        /* Base tracker input/button styles */
+        .tracker-btn {
+            background-color: #4b5563; /* bg-gray-600 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        .tracker-btn:hover {
+            background-color: #6b7280; /* bg-gray-500 */
+        }
+        .tracker-input {
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .tracker-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Basic Tracker Stats Box */
+        .tracker-stat {
+            background-color: #1f2937; /* bg-gray-800 */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+        .tracker-stat span {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: bold;
+            color: #8B5CF6; /* text-violet-500 */
+        }
+        .tracker-stat p {
+            font-size: 0.875rem; /* text-sm */
+            color: #9ca3af; /* text-gray-400 */
+        }
+        
+        /* Advanced Tracker Progress Bars */
+        .progress-bg {
+            background-color: #374151; /* bg-gray-700 */
+            border-radius: 9999px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: #8B5CF6; /* bg-violet-500 */
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* ============================
+         * Modal Styles
+         * (From original NutriFit dashboard)
+         * ============================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #1f2937; /* bg-gray-800 */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid #374151;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 500px;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.open .modal-content {
+            transform: scale(1);
+        }
+        .modal-input {
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+        }
+        .modal-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
+        }
+        .modal-close-btn {
+            font-size: 1.8rem;
+            line-height: 1;
+            color: #6B7280; /* text-gray-500 */
+            transition: color 0.2s;
+        }
+        .modal-close-btn:hover {
+            color: #F9FAFB; /* text-gray-50 */
+        }
+        
+        /* ============================
+         * Page: My Meal Plan
+         * (Inspired by Anime Dashboard grid)
+         * ============================ */
+         .meal-plan-tabs {
+            display: flex;
+            gap: 0.5rem; /* space-x-2 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            border-bottom: 2px solid #374151; /* border-b-2 border-gray-700 */
+         }
+         .meal-plan-tab {
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            font-weight: 600;
+            color: #9CA3AF; /* text-gray-400 */
+            border-bottom: 3px solid transparent;
+            transform: translateY(2px);
+            cursor: pointer;
+            transition: all 0.2s;
+         }
+         .meal-plan-tab:hover {
+            color: #E5E7EB; /* text-gray-200 */
+         }
+         .meal-plan-tab.active {
+            color: #A78BFA; /* text-violet-400 */
+            border-bottom-color: #8B5CF6; /* border-violet-500 */
+         }
+         
+         .meal-plan-content {
+            display: none;
+         }
+         .meal-plan-content.active {
+            display: block;
+         }
+         
+         .recipe-card {
+            background-color: #1F2937; /* bg-gray-800 */
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow: hidden;
+            border: 1px solid #374151;
+            transition: all 0.3s;
+         }
+         .recipe-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.1);
+            border-color: #4B5563;
+         }
+         .recipe-card-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+         }
+         .recipe-card-body {
+            padding: 1rem;
+         }
+         .recipe-card-title {
+            font-weight: 700;
+            color: #FFF;
+            font-size: 1.1rem;
+            
+         }
+         .recipe-card-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem; /* text-sm */
+            color: #9CA3AF; /* text-gray-400 */
+            margin-top: 0.75rem; /* mt-3 */
+            padding-top: 0.75rem; /* pt-3 */
+            border-top: 1px solid #374151; /* border-t border-gray-700 */
+         }
+         .recipe-card-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem; /* space-x-1 */
+         }
+         .recipe-card-detail i {
+            color: #A78BFA; /* text-violet-400 */
+         }
+
+        /* ============================
+         * Page: Progress History
+         * (Inspired by Anime Dashboard stats)
+         * ============================ */
+         .stat-card {
+            background-color: #1F2937; /* bg-gray-800 */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.75rem; /* rounded-xl */
+            display: flex;
+            align-items: center;
+            gap: 1.25rem; /* space-x-5 */
+            border: 1px solid #374151;
+         }
+         .stat-card-icon {
+            font-size: 2rem; /* text-4xl */
+            color: #A78BFA; /* text-violet-400 */
+         }
+         .stat-card-value {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #FFF;
+            line-height: 1;
+         }
+         .stat-card-label {
+            font-size: 0.875rem; /* text-sm */
+            color: #9CA3AF; /* text-gray-400 */
+         }
+
+        /* ============================
+         * Page: Profile & Goals
+         * ============================ */
+         .profile-form-section {
+            background-color: #1F2937; /* bg-gray-800 */
+            padding: 2rem; /* p-8 */
+            border-radius: 0.75rem; /* rounded-xl */
+            border: 1px solid #374151;
+         }
+         .form-label {
+            display: block;
+            font-weight: 600; /* font-semibold */
+            color: #D1D5DB; /* text-gray-300 */
+            margin-bottom: 0.5rem; /* mb-2 */
+         }
+         .form-input, .form-select {
+            width: 100%;
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4B5563; /* border-gray-600 */
+            color: #FFF;
+            padding: 0.75rem 1rem; /* p-3 */
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.2s;
+         }
+         .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5);
+         }
+         /* Fix for select arrow in dark mode */
+         .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239CA3AF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+         }
+         
+         .form-submit-btn {
+            background-color: #8B5CF6; /* bg-violet-600 */
+            color: #FFF;
+            font-weight: 700; /* font-bold */
+            padding: 0.75rem 2rem; /* py-3 px-8 */
+            border-radius: 9999px; /* rounded-full */
+            text-transform: uppercase;
+            letter-spacing: 0.05em; /* tracking-wider */
+            transition: all 0.3s;
+         }
+         .form-submit-btn:hover {
+            background-color: #7C3AED; /* bg-violet-700 */
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+         }
+         
+         /* Success message for form */
+         #profile-save-success {
+            display: none;
+            background-color: #10B981; /* bg-green-500 */
+            color: #FFF;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+         }
+    </style>
+    </head>
+<body class="bg-black text-white">
+
+    <header class="bg-black/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-bebas tracking-wider text-violet-400">NutriFit</a>
+            
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html#plans" class="text-gray-300 hover:text-violet-400 transition duration-300">Our Plans</a>
+                <a href="index.html#calculators" class="text-gray-300 hover:text-violet-400 transition duration-300">Calculators</a>
+                <a href="index.html#about" class="text-gray-300 hover:text-violet-400 transition duration-300">About</a>
+                <a href="index.html#contact" class="text-gray-300 hover:text-violet-400 transition duration-300">Contact</a>
+            </nav>
+
+            <div id="auth-buttons" class="auth-buttons flex items-center space-x-4">
+                <a id="header-login-btn" href="login.html" class="bg-gray-800 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-gray-700 transition duration-300">Login</a>
+                <a id="header-signup-btn" href="signup.html" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-violet-500 transition duration-300">Sign Up</a>
+                
+                <span id="header-profile-btn" class="text-white font-semibold hidden items-center"><i class="fas fa-user-circle mr-2 text-violet-400 text-lg"></i><span id="header-username"></span></span>
+                <a id="header-logout-btn" href="#" class="bg-red-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-red-500 transition duration-300 btn-logout hidden"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+            
+            <button class="md:hidden text-white">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex" style="padding-top: 68px;">
+        
+        <aside class="w-64 bg-black border-r border-gray-800 p-6 min-h-screen hidden lg:block fixed top-[68px] left-0 h-full">
+            <div class="flex items-center space-x-4 mb-10">
+                <img id="sidebar-avatar" src="https://placehold.co/48x48/8B5CF6/000000?text=U" alt="User Avatar" class="rounded-full">
+                <div>
+                    <h2 id="sidebar-username" class="font-bold text-lg text-white">Loading...</h2>
+                    <span id="sidebar-plan" class="text-xs text-violet-400">...</span>
+                </div>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="#" class="sidebar-link active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="meal-plan" data-gated="true">
+                    <i class="fas fa-utensils"></i>
+                    <span>My Meal Plan</span>
+                    <i class="fas fa-lock lock-icon"></i>
+                </a>
+                <a href="#" class="sidebar-link" data-page="history" data-gated="true">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Progress History</span>
+                    <i class="fas fa-lock lock-icon"></i>
+                </a>
+                <a href="#" class="sidebar-link" data-page="profile">
+                    <i class="fas fa-cog"></i>
+                    <span>Profile & Goals</span>
+                </a>
+                <a href="#" class="sidebar-link" data-page="recipes" data-gated="true">
+                    <i class="fas fa-book-open"></i>
+                    <span>Recipe Book</span>
+                    <i class="fas fa-lock lock-icon"></i>
+                </a>
+            </nav>
+            
+            <button id="sidebar-logout-btn" class="w-full text-left py-2 px-3 rounded-md text-red-400 bg-gray-800 hover:bg-red-900/50 transition-colors absolute bottom-10 left-6 right-6">
+                <i class="fas fa-sign-out-alt w-6 mr-1"></i>Log Out
+            </button>
+        </aside>
+
+        <main class="flex-1 bg-gray-900 p-6 lg:p-10" style="margin-left: 256px;"> <div class="max-w-7xl mx-auto">
+                
+                <section id="page-dashboard" class="page-section active">
+                    
+                    <div class="mb-12">
+                        <h1 id="welcome-message" class="text-5xl font-bebas tracking-wider text-violet-400">Loading...</h1>
+                        <p class="text-gray-400 mt-2">Here's a summary of your health journey.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                        <div class="lg:col-span-1 space-y-8">
+
+                            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-user-circle text-violet-400 text-2xl mr-3"></i>
+                                    <h3 class="text-2xl font-bebas tracking-wider text-white">Your Profile</h3>
+                                </div>
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-sm text-gray-400">Username</p>
+                                        <p id="user-username" class="text-lg text-white">...</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-400">Email</p>
+                                        <p id="user-email" class="text-lg text-white break-words">...</p>
+                                    </div>
+                                    <button class="w-full text-left py-2 px-3 rounded-md text-violet-300 bg-gray-700 hover:bg-violet-900/50 transition-colors sidebar-link" data-page="profile">
+                                        <i class="fas fa-cog w-6 mr-1"></i>Edit Profile & Goals
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-clipboard-list text-violet-400 text-2xl mr-3"></i>
+                                    <h3 id="plan-widget-title" class="text-2xl font-bebas tracking-wider text-white">My Plan</h3>
+                                </div>
+                                <div id="plan-widget-content">
+                                    <p class="text-gray-300 mb-4">You currently have no active plan. Browse our plans to get started on your health journey.</p>
+                                    <a href="index.html#plans" class="inline-block w-full text-center bg-violet-600 text-white font-bold py-3 px-5 rounded-lg uppercase tracking-wider hover:bg-violet-500 transition duration-300">
+                                        Browse Plans
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div id="daily-log-widget" class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hidden">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-history text-violet-400 text-2xl mr-3"></i>
+                                    <h3 class="text-2xl font-bebas tracking-wider text-white">Daily Log</h3>
+                                </div>
+                                <ul id="daily-log-list" class="space-y-2 max-h-48 overflow-y-auto pr-2">
+                                    <li class="text-gray-400">No entries yet...</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-calculator text-violet-400 text-2xl mr-3"></i>
+                                    <h3 class="text-2xl font-bebas tracking-wider text-white">Health Tools</h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <a href="bmi-calculator.html" class="widget-link">
+                                        <h4 class="font-bold text-white text-lg">BMI Calculator</h4>
+                                        <p class="text-gray-400 text-sm">Calculate your Body Mass Index.</p>
+                                    </a>
+                                    <a href="diet-calculator.html" class="widget-link">
+                                        <h4 class="font-bold text-white text-lg">Diet Calculator</h4>
+                                        <p class="text-gray-400 text-sm">Estimate your daily calorie needs.</p>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="lg:col-span-2 space-y-8">
+
+                            <div id="upgrade-widget" class="bg-gradient-to-r from-violet-900 to-purple-900 p-8 rounded-2xl shadow-lg text-center hidden border border-violet-700">
+                                <i class="fas fa-rocket text-violet-300 text-5xl mb-6"></i>
+                                <h3 class="text-3xl font-bebas tracking-wider text-white mb-3">Unlock Your Full Potential</h3>
+                                <p class="text-gray-300 mb-6">Upgrade to Pro or Premium to access the advanced macro tracker, weight chart, and daily log.</p>
+                                <a href="index.html#plans" class="inline-block w-full text-center bg-violet-600 text-white font-bold py-3 px-5 rounded-lg uppercase tracking-wider hover:bg-violet-500 transition duration-300">
+                                    View Plans
+                                </a>
+                            </div>
+
+                            <div id="advanced-tracker" class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hidden">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar-check text-violet-400 text-2xl mr-3"></i>
+                                        <h3 id="tracker-title" class="text-2xl font-bebas tracking-wider text-white">Daily Tracker</h3>
+                                    </div>
+                                    <button id="open-goals-modal-btn" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-cog mr-1"></i>Set Goals</button>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <div class="flex justify-between items-baseline mb-1">
+                                            <span class="font-bold text-lg text-white">Calories</span>
+                                            <span id="calorie-display" class="text-lg text-gray-300">0 / 2500</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div id="calorie-progress" class="progress-bar" style="width: 0%;"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between items-baseline mb-1">
+                                            <span class="font-bold text-lg text-white">Protein</span>
+                                            <span id="protein-display" class="text-lg text-gray-300">0 / 150g</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div id="protein-progress" class="progress-bar" style="width: 0%; background-color: #34D399;"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between items-baseline mb-1">
+                                            <span class="font-bold text-lg text-white">Carbs</span>
+                                            <span id="carbs-display" class="text-lg text-gray-300">0 / 300g</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div id="carbs-progress" class="progress-bar" style="width: 0%; background-color: #F87171;"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between items-baseline mb-1">
+                                            <span class="font-bold text-lg text-white">Fat</span>
+                                            <span id="fat-display" class="text-lg text-gray-300">0 / 70g</span>
+                                        </div>
+                                        <div class="progress-bg">
+                                            <div id="fat-progress" class="progress-bar" style="width: 0%; background-color: #FBBF24;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label for="advanced-calorie-input" class="block text-sm font-bold text-gray-300 mb-2">Quick Add/Remove Calories</label>
+                                    <div class="flex space-x-2">
+                                        <input type="number" id="advanced-calorie-input" min="0" placeholder="e.g., 150" class="tracker-input flex-grow">
+                                        <button id="advanced-remove-calorie-btn" class="tracker-btn bg-red-600 hover:bg-red-500"><i class="fas fa-minus"></i></button>
+                                        <button id="advanced-add-calorie-btn" class="tracker-btn"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <div class="flex justify-between items-baseline mb-1">
+                                        <span class="font-bold text-lg text-white">Water</span>
+                                        <span id="water-display" class="text-lg text-gray-300">0 / 8 Glasses</span>
+                                    </div>
+                                    <div class="progress-bg mb-3">
+                                        <div id="water-progress" class="progress-bar" style="width: 0%; background-color: #60A5FA;"></div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button id="remove-water-btn" class="tracker-btn w-full bg-red-600 hover:bg-red-500"><i class="fas fa-minus mr-2"></i>Remove 1</button>
+                                        <button id="add-water-btn" class="tracker-btn w-full"><i class="fas fa-plus mr-2"></i>Add 1</button>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
+                                    <button id="open-meal-modal-btn" class="tracker-btn w-full bg-violet-600 hover:bg-violet-500 text-lg py-3"><i class="fas fa-utensils mr-2"></i>Add Meal</button>
+                                    <label class="tracker-btn w-full text-lg py-3 flex items-center justify-center cursor-pointer">
+                                        <input type="checkbox" id="exercise-check" class="w-5 h-5 bg-gray-700 border-gray-600 rounded text-violet-500 focus:ring-violet-500 mr-3">
+                                        <span>Exercised Today?</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="basic-tracker" class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hidden">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-calendar-check text-violet-400 text-2xl mr-3"></i>
+                                    <h3 id="basic-tracker-title" class="text-2xl font-bebas tracking-wider text-white">Daily Tracker</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="tracker-stat">
+                                        <span id="basic-calorie-display">0</span>
+                                        <p>Calories Eaten</p>
+                                    </div>
+                                    <div class="tracker-stat">
+                                        <span id="basic-water-display">0</span>
+                                        <p>Glasses of Water</p>
+                                    </div>
+                                </div>
+                        
+                                <div class="mb-6">
+                                    <label class="block text-sm font-bold text-gray-300 mb-2">Log Water</label>
+                                    <div class="flex space-x-2">
+                                        <button id="basic-remove-water-btn" class="tracker-btn w-full bg-red-600 hover:bg-red-500"><i class="fas fa-minus mr-2"></i>Remove 1 Glass</button>
+                                        <button id="basic-add-water-btn" class="tracker-btn w-full"><i class="fas fa-plus mr-2"></i>Add 1 Glass</button>
+                                    </div>
+                                </div>
+                        
+                                <div class="mb-6">
+                                    <label for="basic-calorie-input" class="block text-sm font-bold text-gray-300 mb-2">Log Calories</label>
+                                    <div class="flex space-x-2">
+                                        <input type="number" id="basic-calorie-input" min="0" placeholder="e.g., 300" class="tracker-input flex-grow">
+                                        <button id="basic-remove-calorie-btn" class="tracker-btn bg-red-600 hover:bg-red-500"><i class="fas fa-minus"></i></button>
+                                        <button id="basic-add-calorie-btn" class="tracker-btn"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="weight-tracker-widget" class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hidden">
+                                <div class="flex items-center mb-4">
+                                    <i class="fas fa-chart-line text-violet-400 text-2xl mr-3"></i>
+                                    <h3 class="text-2xl font-bebas tracking-wider text-white">Weight Tracker</h3>
+                                </div>
+                                <form id="weight-log-form" class="flex space-x-2 mb-4">
+                                    <input type="number" id="weight-input" min="0" step="0.1" placeholder="Enter weight (kg)" class="tracker-input flex-grow" required>
+                                    <button type="submit" class="tracker-btn bg-violet-600 hover:bg-violet-500"><i class="fas fa-plus"></i> Log</button>
+                                </form>
+                                <div class="h-64">
+                                    <canvas id="weightChart"></canvas>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <section id="page-meal-plan" class="page-section">
+                    <div class="mb-12">
+                        <h1 class="text-5xl font-bebas tracking-wider text-violet-400">My Meal Plan</h1>
+                        <p class="text-gray-400 mt-2">Your personalized recipe and meal guide for the week.</p>
+                    </div>
+
+                    <div class="meal-plan-tabs">
+                        <button class="meal-plan-tab active" data-target="day-mon">Monday</button>
+                        <button class="meal-plan-tab" data-target="day-tue">Tuesday</button>
+                        <button class="meal-plan-tab" data-target="day-wed">Wednesday</button>
+                        <button class="meal-plan-tab" data-target="day-thu">Thursday</button>
+                        <button class="meal-plan-tab" data-target="day-fri">Friday</button>
+                        <button class="meal-plan-tab" data-target="day-sat">Saturday</button>
+                        <button class="meal-plan-tab" data-target="day-sun">Sunday</button>
+                    </div>
+
+                    <div id="day-mon" class="meal-plan-content active">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="recipe-card">
+                                <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Healthy Salad" class="recipe-card-image">
+                                <div class="recipe-card-body">
+                                    <span class="text-xs font-bold uppercase text-violet-400">Breakfast</span>
+                                    <h3 class="recipe-card-title">Avocado & Egg Toast</h3>
+                                    <div class="recipe-card-details">
+                                        <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 450 kcal</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 20g P</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-bread-slice"></i> 30g C</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-tint"></i> 25g F</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recipe-card">
+                                <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Chicken Breast" class="recipe-card-image">
+                                <div class="recipe-card-body">
+                                    <span class="text-xs font-bold uppercase text-violet-400">Lunch</span>
+                                    <h3 class="recipe-card-title">Grilled Chicken & Quinoa</h3>
+                                    <div class="recipe-card-details">
+                                        <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 620 kcal</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 45g P</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-bread-slice"></i> 50g C</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-tint"></i> 20g F</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recipe-card">
+                                <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Salmon" class="recipe-card-image">
+                                <div class="recipe-card-body">
+                                    <span class="text-xs font-bold uppercase text-violet-400">Dinner</span>
+                                    <h3 class="recipe-card-title">Baked Salmon & Asparagus</h3>
+                                    <div class="recipe-card-details">
+                                        <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 550 kcal</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 40g P</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-bread-slice"></i> 20g C</span>
+                                        <span class="recipe-card-detail"><i class="fas fa-tint"></i> 30g F</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="day-tue" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Tuesday's meal plan will appear here. (Demo)</p></div>
+                    <div id="day-wed" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Wednesday's meal plan will appear here. (Demo)</p></div>
+                    <div id="day-thu" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Thursday's meal plan will appear here. (Demo)</p></div>
+                    <div id="day-fri" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Friday's meal plan will appear here. (Demo)</p></div>
+                    <div id="day-sat" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Saturday's meal plan will appear here. (Demo)</p></div>
+                    <div id="day-sun" class="meal-plan-content"><p class="text-gray-400 p-6 text-center">Sunday's meal plan will appear here. (Demo)</p></div>
+
+                </section>
+                
+                <section id="page-history" class="page-section">
+                    <div class="mb-12">
+                        <h1 class="text-5xl font-bebas tracking-wider text-violet-400">Progress History</h1>
+                        <p class="text-gray-400 mt-2">Visualize your journey and celebrate your milestones.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="stat-card">
+                            <i class="fas fa-calendar-check stat-card-icon"></i>
+                            <div>
+                                <p id="stat-days-tracked" class="stat-card-value">0</p>
+                                <p class="stat-card-label">Days Tracked</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-dumbbell stat-card-icon"></i>
+                            <div>
+                                <p id="stat-workouts" class="stat-card-value">0</p>
+                                <p class="stat-card-label">Workouts Logged</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-weight stat-card-icon"></i>
+                            <div>
+                                <p id="stat-weight-change" class="stat-card-value">0 kg</p>
+                                <p class="stat-card-label">Total Weight Change</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                         <h3 class="text-2xl font-bebas tracking-wider text-white mb-4">Your Weight Journey</h3>
+                         <div class="h-96"> <canvas id="weightChartLarge"></canvas>
+                         </div>
+                    </div>
+                </section>
+                
+                <section id="page-profile" class="page-section">
+                    <div class="mb-12">
+                        <h1 class="text-5xl font-bebas tracking-wider text-violet-400">Profile & Goals</h1>
+                        <p class="text-gray-400 mt-2">Update your personal information and tracking goals.</p>
+                    </div>
+
+                    <div id="profile-save-success" class="mb-6">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Your settings have been saved!
+                    </div>
+                    
+                    <form id="profile-form" class="space-y-10">
+                        <div class="profile-form-section">
+                            <h2 class="text-3xl font-bebas tracking-wider text-white mb-6">Personal Details</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="profile-username" class="form-label">Username</label>
+                                    <input type="text" id="profile-username" class="form-input" disabled>
+                                    <p class="text-xs text-gray-500 mt-1">Username cannot be changed.</p>
+                                </div>
+                                <div>
+                                    <label for="profile-email" class="form-label">Email</label>
+                                    <input type="email" id="profile-email" class="form-input" disabled>
+                                </div>
+                                <div>
+                                    <label for="profile-goal" class="form-label">Primary Goal</label>
+                                    <select id="profile-goal" class="form-select">
+                                        <option value="lose">Lose Weight</option>
+                                        <option value="maintain">Maintain Weight</option>
+                                        <option value="gain">Gain Muscle</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="profile-activity" class="form-label">Activity Level</label>
+                                    <select id="profile-activity" class="form-select">
+                                        <option value="sedentary">Sedentary (little to no exercise)</option>
+                                        <option value="light">Lightly Active (1-3 days/week)</option>
+                                        <option value="moderate">Moderately Active (3-5 days/week)</option>
+                                        <option value="very">Very Active (6-7 days/week)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-form-section">
+                            <h2 class="text-3xl font-bebas tracking-wider text-white mb-6">Daily Tracking Goals</h2>
+                            <p class="text-gray-400 mb-6 -mt-4">These settings only apply if you have a Pro or Premium plan.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="profile-goal-calories" class="form-label">Calories (kcal)</label>
+                                    <input type="number" id="profile-goal-calories" class="form-input" min="0">
+                                </div>
+                                <div>
+                                    <label for="profile-goal-protein" class="form-label">Protein (g)</label>
+                                    <input type="number" id="profile-goal-protein" class="form-input" min="0">
+                                </div>
+                                <div>
+                                    <label for="profile-goal-carbs" class="form-label">Carbs (g)</label>
+                                    <input type="number" id="profile-goal-carbs" class="form-input" min="0">
+                                </div>
+                                <div>
+                                    <label for="profile-goal-fat" class="form-label">Fat (g)</label>
+                                    <input type="number" id="profile-goal-fat" class="form-input" min="0">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="profile-goal-water" class="form-label">Water (glasses)</label>
+                                    <input type="number" id="profile-goal-water" class="form-input" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-right">
+                            <button type="submit" class="form-submit-btn">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </section>
+                
+                <section id="page-recipes" class="page-section">
+                    <div class="mb-12">
+                        <h1 class="text-5xl font-bebas tracking-wider text-violet-400">Pro Recipe Book</h1>
+                        <p class="text-gray-400 mt-2">Exclusive recipes for Pro & Premium members.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="recipe-card">
+                            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Recipe" class="recipe-card-image">
+                            <div class="recipe-card-body">
+                                <span class="text-xs font-bold uppercase text-violet-400">Lunch</span>
+                                <h3 class="recipe-card-title">Ultimate Quinoa Power Bowl</h3>
+                                <div class="recipe-card-details">
+                                    <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 510 kcal</span>
+                                    <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 22g P</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recipe-card">
+                            <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Recipe" class="recipe-card-image">
+                            <div class="recipe-card-body">
+                                <span class="text-xs font-bold uppercase text-violet-400">Breakfast</span>
+                                <h3 class="recipe-card-title">Green Goddess Smoothie</h3>
+                                <div class="recipe-card-details">
+                                    <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 320 kcal</span>
+                                    <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 15g P</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="recipe-card">
+                            <img src="https://images.unsplash.com/photo-1565299585323-b1d0b0b0b0b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Recipe" class="recipe-card-image">
+                            <div class="recipe-card-body">
+                                <span class="text-xs font-bold uppercase text-violet-400">Snack</span>
+                                <h3 class="recipe-card-title">Protein-Packed Pizza</h3>
+                                <div class="recipe-card-details">
+                                    <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 480 kcal</span>
+                                    <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 35g P</span>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="recipe-card">
+                            <img src="https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Recipe" class="recipe-card-image">
+                            <div class="recipe-card-body">
+                                <span class="text-xs font-bold uppercase text-violet-400">Dinner</span>
+                                <h3 class="recipe-card-title">Spicy Lentil & Vegetable Stew</h3>
+                                <div class="recipe-card-details">
+                                    <span class="recipe-card-detail"><i class="fas fa-fire-alt"></i> 410 kcal</span>
+                                    <span class="recipe-card-detail"><i class="fas fa-drumstick-bite"></i> 18g P</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="meal-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bebas tracking-wider text-white">Add Meal</h3>
+                <button id="close-meal-modal-btn" class="modal-close-btn">&times;</button>
+            </div>
+            <form id="add-meal-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="meal-calories" class="block text-sm font-bold text-gray-300 mb-2">Calories (kcal)</label>
+                        <input type="number" id="meal-calories" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="meal-protein" class="block text-sm font-bold text-gray-300 mb-2">Protein (g)</label>
+                        <input type="number" id="meal-protein" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="meal-carbs" class="block text-sm font-bold text-gray-300 mb-2">Carbs (g)</label>
+                        <input type="number" id="meal-carbs" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="meal-fat" class="block text-sm font-bold text-gray-300 mb-2">Fat (g)</label>
+                        <input type="number" id="meal-fat" min="0" class="modal-input" required>
+                    </div>
+                </div>
+                <button type="submit" class="w-full tracker-btn bg-violet-600 hover:bg-violet-500 text-lg py-3 mt-4">Add to Log</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="goals-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bebas tracking-wider text-white">Set Daily Goals</h3>
+                <button id="close-goals-modal-btn" class="modal-close-btn">&times;</button>
+            </div>
+            <p class="text-gray-400 text-sm mb-4">Set your goals here, or visit the "Profile & Goals" page for more options.</p>
+            <form id="set-goals-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="goal-calories" class="block text-sm font-bold text-gray-300 mb-2">Calories (kcal)</label>
+                        <input type="number" id="goal-calories" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="goal-protein" class="block text-sm font-bold text-gray-300 mb-2">Protein (g)</label>
+                        <input type="number" id="goal-protein" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="goal-carbs" class="block text-sm font-bold text-gray-300 mb-2">Carbs (g)</label>
+                        <input type="number" id="goal-carbs" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="goal-fat" class="block text-sm font-bold text-gray-300 mb-2">Fat (g)</label>
+                        <input type="number" id="goal-fat" min="0" class="modal-input" required>
+                    </div>
+                    <div class="mb-4 md:col-span-2">
+                        <label for="goal-water" class="block text-sm font-bold text-gray-300 mb-2">Water (glasses)</label>
+                        <input type="number" id="goal-water" min="0" class="modal-input" required>
+                    </div>
+                </div>
+                <button type="submit" class="w-full tracker-btn bg-violet-600 hover:bg-violet-500 text-lg py-3 mt-4">Save Goals</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // ==========================================
+            // 1. GLOBAL VARIABLES & HELPER FUNCTIONS
+            // ==========================================
+            
+            let currentUserAccount = null;
+            let allUsers = {};
+            let userEmail = '';
+            let weightChartInstance = null;
+            let weightChartLargeInstance = null;
+
+            /**
+             * Helper function to get today's date in YYYY-MM-DD format.
+             */
+            function getTodayDateString() {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
+            /**
+             * Helper function for logging out the user.
+             */
+            function logoutUser() {
+                localStorage.setItem('isLoggedIn', 'false');
+                localStorage.removeItem('currentUser');
+                // Note: We don't clear all data (like trackers) on logout,
+                // in case they log back in.
+                window.location.href = 'index.html';
+            }
+
+
+            // ==========================================
+            // 2. AUTHENTICATION & PAGE GUARD
+            // ==========================================
+            
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                // If not logged in, redirect to login page
+                window.location.href = 'login.html';
+                return; // Stop executing the rest of the script
+            }
+
+            // Load user data from localStorage
+            const currentUserJSON = localStorage.getItem('currentUser');
+            allUsers = JSON.parse(localStorage.getItem('nutriFitUsers')) || {};
+
+            if (currentUserJSON) {
+                userEmail = JSON.parse(currentUserJSON).email;
+                if (allUsers[userEmail]) {
+                    currentUserAccount = allUsers[userEmail];
+                }
+            }
+
+            if (!currentUserAccount) {
+                // Data mismatch, something is wrong. Log out.
+                logoutUser();
+                return;
+            }
+
+
+            // ==========================================
+            // 3. INITIAL PAGE SETUP & PERSONALIZATION
+            // ==========================================
+
+            // --- Header Auth Buttons ---
+            document.getElementById('header-login-btn').classList.add('hidden');
+            document.getElementById('header-signup-btn').classList.add('hidden');
+            document.getElementById('header-profile-btn').classList.remove('hidden');
+            document.getElementById('header-logout-btn').classList.remove('hidden');
+            document.getElementById('header-username').textContent = currentUserAccount.username;
+            
+            // --- Welcome Message & Sidebar ---
+            document.getElementById('welcome-message').textContent = 'Welcome back, ' + currentUserAccount.username + '!';
+            document.getElementById('sidebar-username').textContent = currentUserAccount.username;
+            document.getElementById('user-username').textContent = currentUserAccount.username;
+            document.getElementById('user-email').textContent = userEmail;
+            // Set avatar initial
+            const firstLetter = currentUserAccount.username.charAt(0).toUpperCase() || 'U';
+            document.getElementById('sidebar-avatar').src = `https://placehold.co/48x48/8B5CF6/FFFFFF?text=${firstLetter}`;
+
+            // --- Logout Button Listeners ---
+            document.getElementById('header-logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                logoutUser();
+            });
+            document.getElementById('sidebar-logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                logoutUser();
+            });
+            
+            
+            // ==========================================
+            // 4. SIDEBAR NAVIGATION LOGIC
+            // ==========================================
+            
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const pageSections = document.querySelectorAll('.page-section');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Check if link is disabled
+                    if (this.classList.contains('disabled')) {
+                        return;
+                    }
+                    
+                    const pageId = this.getAttribute('data-page');
+                    
+                    // Remove 'active' from all links and pages
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    pageSections.forEach(p => p.classList.remove('active'));
+                    
+                    // Add 'active' to clicked link and target page
+                    this.classList.add('active');
+                    const targetPage = document.getElementById('page-' + pageId);
+                    if (targetPage) {
+                        targetPage.classList.add('active');
+                    }
+                    
+                    // Special case: If history page, redraw chart
+                    if (pageId === 'history') {
+                        // Redraw large chart to fix canvas sizing issues
+                        initializeWeightChart('weightChartLarge', true);
+                        updateStats();
+                    }
+                });
+            });
+
+
+            // ==========================================
+            // 5. PLAN GATING & FEATURE LOCKING
+            // ==========================================
+            
+            const planWidgetTitle = document.getElementById('plan-widget-title');
+            const planWidgetContent = document.getElementById('plan-widget-content');
+            const gatedLinks = document.querySelectorAll('[data-gated="true"]');
+            
+            // Get all the widget containers
+            const advancedTracker = document.getElementById('advanced-tracker');
+            const basicTracker = document.getElementById('basic-tracker');
+            const weightTrackerWidget = document.getElementById('weight-tracker-widget');
+            const dailyLogWidget = document.getElementById('daily-log-widget');
+            const upgradeWidget = document.getElementById('upgrade-widget');
+
+            let userPlan = 'None';
+            
+            if (currentUserAccount.planInfo) {
+                const plan = currentUserAccount.planInfo;
+                userPlan = plan.planName; // 'Basic', 'Pro', or 'Premium'
+                
+                let displayEndDate = plan.endDate;
+                if (plan.endDate !== 'Lifetime') {
+                    const [year, month, day] = plan.endDate.split('-');
+                    displayEndDate = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                }
+                
+                // Update Sidebar and Profile Plan
+                document.getElementById('sidebar-plan').textContent = `${plan.planName} Member`;
+                
+                // Update Plan Widget
+                planWidgetTitle.textContent = `My Plan: ${plan.planName}`;
+                planWidgetContent.innerHTML = `
+                    <div class="space-y-2 text-gray-300 mb-4">
+                        <p><strong>Status:</strong> <span class="text-green-400">Active</span></p>
+                        <p><strong>Expires:</strong> ${displayEndDate}</p>
+                    </div>
+                    <a href="index.html#contact" class="inline-block w-full text-center bg-gray-700 text-white font-bold py-3 px-5 rounded-lg uppercase tracking-wider hover:bg-gray-600 transition duration-300">
+                        Manage Plan
+                    </a>
+                `;
+                
+                // --- Handle Feature Gating ---
+                if (plan.planName === 'Pro' || plan.planName === 'Premium') {
+                    // Show advanced features
+                    advancedTracker.classList.remove('hidden');
+                    weightTrackerWidget.classList.remove('hidden');
+                    dailyLogWidget.classList.remove('hidden');
+                    
+                    // Unlock sidebar links
+                    gatedLinks.forEach(link => {
+                        link.classList.remove('disabled');
+                        link.querySelector('.lock-icon').style.display = 'none';
+                    });
+                    
+                    // Initialize the advanced scripts
+                    initializeAdvancedTracker();
+                    initializeWeightChart('weightChart');
+                    
+                } else if (plan.planName === 'Basic') {
+                    // Show basic features
+                    basicTracker.classList.remove('hidden');
+                    
+                    // Keep sidebar links locked
+                    gatedLinks.forEach(link => {
+                        link.classList.add('disabled');
+                        link.querySelector('.lock-icon').style.display = 'inline-block';
+                    });
+                    
+                    // Initialize the basic script
+                    initializeBasicTracker();
+                }
+                
+            } else {
+                // No plan at all
+                upgradeWidget.classList.remove('hidden');
+                document.getElementById('sidebar-plan').textContent = 'No Active Plan';
+                
+                // Lock all gated links
+                gatedLinks.forEach(link => {
+                    link.classList.add('disabled');
+                    link.querySelector('.lock-icon').style.display = 'inline-block';
+                });
+            }
+
+            
+            // ==========================================
+            // 6. BASIC TRACKER LOGIC
+            // (For 'Basic' plan)
+            // ==========================================
+            
+            function initializeBasicTracker() {
+                // Get elements
+                const trackerTitle = document.getElementById('basic-tracker-title');
+                const calorieDisplay = document.getElementById('basic-calorie-display');
+                const waterDisplay = document.getElementById('basic-water-display');
+                const addWaterBtn = document.getElementById('basic-add-water-btn');
+                const removeWaterBtn = document.getElementById('basic-remove-water-btn');
+                const calorieInput = document.getElementById('basic-calorie-input');
+                const addCalorieBtn = document.getElementById('basic-add-calorie-btn');
+                const removeCalorieBtn = document.getElementById('basic-remove-calorie-btn');
+                
+                let trackerData = {};
+                const storageKey = `nutriFitBasicTracker_${userEmail}`;
+
+                function saveTrackerData() {
+                    localStorage.setItem(storageKey, JSON.stringify(trackerData));
+                }
+
+                function updateDisplay() {
+                    calorieDisplay.textContent = trackerData.calories;
+                    waterDisplay.textContent = trackerData.water;
+                }
+
+                function loadTracker() {
+                    const todayStr = getTodayDateString();
+                    trackerTitle.textContent = `Daily Tracker (${todayStr.split('-').reverse().join('/')})`;
+                    const storedData = localStorage.getItem(storageKey);
+                    
+                    const defaultData = { date: todayStr, calories: 0, water: 0 };
+                    
+                    if (storedData) {
+                        trackerData = JSON.parse(storedData);
+                        if (trackerData.date !== todayStr) {
+                            trackerData = defaultData;
+                            saveTrackerData();
+                        }
+                    } else {
+                        trackerData = defaultData;
+                        saveTrackerData();
+                    }
+                    updateDisplay();
+                }
+
+                addWaterBtn.addEventListener('click', () => {
+                    trackerData.water += 1;
+                    updateDisplay();
+                    saveTrackerData();
+                });
+
+                removeWaterBtn.addEventListener('click', () => {
+                    if (trackerData.water > 0) {
+                        trackerData.water -= 1;
+                        updateDisplay();
+                        saveTrackerData();
+                    }
+                });
+
+                addCalorieBtn.addEventListener('click', () => {
+                    const calories = parseInt(calorieInput.value, 10);
+                    if (calories > 0) {
+                        trackerData.calories += calories;
+                        calorieInput.value = '';
+                        updateDisplay();
+                        saveTrackerData();
+                    }
+                });
+
+                removeCalorieBtn.addEventListener('click', () => {
+                    const calories = parseInt(calorieInput.value, 10);
+                    if (calories > 0) {
+                        trackerData.calories -= calories;
+                        if (trackerData.calories < 0) {
+                            trackerData.calories = 0; // Prevent negative
+                        }
+                        calorieInput.value = '';
+                        updateDisplay();
+                        saveTrackerData();
+                    }
+                });
+
+                loadTracker();
+            }
+
+
+            // ==========================================
+            // 7. ADVANCED TRACKER LOGIC
+            // (For 'Pro' & 'Premium' plans)
+            // ==========================================
+
+            function initializeAdvancedTracker() {
+                // Tracker UI Elements
+                const trackerTitle = document.getElementById('tracker-title');
+                const calorieDisplay = document.getElementById('calorie-display');
+                const calorieProgress = document.getElementById('calorie-progress');
+                const proteinDisplay = document.getElementById('protein-display');
+                const proteinProgress = document.getElementById('protein-progress');
+                const carbsDisplay = document.getElementById('carbs-display');
+                const carbsProgress = document.getElementById('carbs-progress');
+                const fatDisplay = document.getElementById('fat-display');
+                const fatProgress = document.getElementById('fat-progress');
+                const waterDisplay = document.getElementById('water-display');
+                const waterProgress = document.getElementById('water-progress');
+                const addWaterBtn = document.getElementById('add-water-btn');
+                const removeWaterBtn = document.getElementById('remove-water-btn');
+                const exerciseCheck = document.getElementById('exercise-check');
+                const dailyLogList = document.getElementById('daily-log-list');
+
+                // Meal Modal Elements
+                const mealModal = document.getElementById('meal-modal');
+                const openMealModalBtn = document.getElementById('open-meal-modal-btn');
+                const closeMealModalBtn = document.getElementById('close-meal-modal-btn');
+                const addMealForm = document.getElementById('add-meal-form');
+                const mealCaloriesInput = document.getElementById('meal-calories');
+                const mealProteinInput = document.getElementById('meal-protein');
+                const mealCarbsInput = document.getElementById('meal-carbs');
+                const mealFatInput = document.getElementById('meal-fat');
+
+                // Quick Calorie Add Elements
+                const quickCalorieInput = document.getElementById('advanced-calorie-input');
+                const quickAddCalorieBtn = document.getElementById('advanced-add-calorie-btn');
+                const quickRemoveCalorieBtn = document.getElementById('advanced-remove-calorie-btn');
+                // Goals Modal Elements
+                const goalsModal = document.getElementById('goals-modal');
+                const openGoalsModalBtn = document.getElementById('open-goals-modal-btn');
+                const closeGoalsModalBtn = document.getElementById('close-goals-modal-btn');
+                const setGoalsForm = document.getElementById('set-goals-form');
+                const goalCaloriesInput = document.getElementById('goal-calories');
+                const goalProteinInput = document.getElementById('goal-protein');
+                const goalCarbsInput = document.getElementById('goal-carbs');
+                const goalFatInput = document.getElementById('goal-fat');
+                const goalWaterInput = document.getElementById('goal-water');
+                
+                let trackerData = {};
+                const storageKey = `nutriFitTracker_${userEmail}`; // User-specific key
+
+                function saveTrackerData() {
+                    localStorage.setItem(storageKey, JSON.stringify(trackerData));
+                }
+                
+                function updateGoalDisplays(data) {
+                    // Update goal inputs in *both* the modal and profile page
+                    goalCaloriesInput.value = data.caloriesGoal;
+                    goalProteinInput.value = data.proteinGoal;
+                    goalCarbsInput.value = data.carbsGoal;
+                    goalFatInput.value = data.fatGoal;
+                    goalWaterInput.value = data.waterGoal;
+                    
+                    document.getElementById('profile-goal-calories').value = data.caloriesGoal;
+                    document.getElementById('profile-goal-protein').value = data.proteinGoal;
+                    document.getElementById('profile-goal-carbs').value = data.carbsGoal;
+                    document.getElementById('profile-goal-fat').value = data.fatGoal;
+                    document.getElementById('profile-goal-water').value = data.waterGoal;
+                }
+
+                function updateTrackerDisplay() {
+                    // Update text displays
+                    calorieDisplay.textContent = `${trackerData.calories} / ${trackerData.caloriesGoal} kcal`;
+                    proteinDisplay.textContent = `${trackerData.protein} / ${trackerData.proteinGoal}g`;
+                    carbsDisplay.textContent = `${trackerData.carbs} / ${trackerData.carbsGoal}g`;
+                    fatDisplay.textContent = `${trackerData.fat} / ${trackerData.fatGoal}g`;
+                    waterDisplay.textContent = `${trackerData.water} / ${trackerData.waterGoal} Glasses`;
+
+                    // Update progress bars
+                    const calcPercent = (current, goal) => (goal > 0 ? (current / goal) * 100 : 0);
+                    calorieProgress.style.width = `${calcPercent(trackerData.calories, trackerData.caloriesGoal)}%`;
+                    proteinProgress.style.width = `${calcPercent(trackerData.protein, trackerData.proteinGoal)}%`;
+                    carbsProgress.style.width = `${calcPercent(trackerData.carbs, trackerData.carbsGoal)}%`;
+                    fatProgress.style.width = `${calcPercent(trackerData.fat, trackerData.fatGoal)}%`;
+                    waterProgress.style.width = `${calcPercent(trackerData.water, trackerData.waterGoal)}%`;
+
+                    // Update exercise check
+                    exerciseCheck.checked = trackerData.exercise;
+
+                    // Update Daily Log
+                    dailyLogList.innerHTML = ''; // Clear list
+                    if (trackerData.history.length === 0) {
+                        dailyLogList.innerHTML = '<li class="text-gray-400">No entries yet...</li>';
+                    } else {
+                        // Show most recent first
+                        trackerData.history.slice().reverse().forEach(item => {
+                            const li = document.createElement('li');
+                            li.className = 'text-gray-300 text-sm p-2 bg-gray-700 rounded';
+                            li.textContent = item;
+                            dailyLogList.appendChild(li);
+                        });
+                    }
+                }
+
+                function loadTrackerData() {
+                    const todayStr = getTodayDateString();
+                    trackerTitle.textContent = `Daily Tracker (${todayStr.split('-').reverse().join('/')})`;
+                    const storedData = localStorage.getItem(storageKey);
+                    
+                    // Default data structure
+                    const defaultData = {
+                        date: todayStr,
+                        calories: 0, caloriesGoal: 2500,
+                        protein: 0, proteinGoal: 150,
+                        carbs: 0, carbsGoal: 300,
+                        fat: 0, fatGoal: 70,
+                        water: 0, waterGoal: 8,
+                        exercise: false,
+                        history: []
+                    };
+                    
+                    if (storedData) {
+                        trackerData = JSON.parse(storedData);
+                        // Reset if it's a new day
+                        if (trackerData.date !== todayStr) {
+                            // Keep goals from previous day
+                            defaultData.caloriesGoal = trackerData.caloriesGoal || 2500;
+                            defaultData.proteinGoal = trackerData.proteinGoal || 150;
+                            defaultData.carbsGoal = trackerData.carbsGoal || 300;
+                            defaultData.fatGoal = trackerData.fatGoal || 70;
+                            defaultData.waterGoal = trackerData.waterGoal || 8;
+                            trackerData = defaultData;
+                        }
+                    } else {
+                        trackerData = defaultData;
+                    }
+                    saveTrackerData();
+                    updateTrackerDisplay();
+                    updateGoalDisplays(trackerData); // Populate goal forms
+                }
+
+                // --- Water Listeners ---
+                addWaterBtn.addEventListener('click', () => {
+                    trackerData.water += 1;
+                    trackerData.history.push(`+1 Glass of Water`);
+                    updateTrackerDisplay();
+                    saveTrackerData();
+                });
+
+                removeWaterBtn.addEventListener('click', () => {
+                    if (trackerData.water > 0) {
+                        trackerData.water -= 1;
+                        trackerData.history.push(`-1 Glass of Water`);
+                        updateTrackerDisplay();
+                        saveTrackerData();
+                    }
+                });
+
+                // --- Exercise Listener ---
+                exerciseCheck.addEventListener('change', () => {
+                    trackerData.exercise = exerciseCheck.checked;
+                    trackerData.history.push(trackerData.exercise ? 'Logged Exercise' : 'Removed Exercise');
+                    updateTrackerDisplay();
+                    saveTrackerData();
+                });
+
+                // --- Quick Calorie Listeners ---
+                quickAddCalorieBtn.addEventListener('click', () => {
+                    const calories = parseInt(quickCalorieInput.value) || 0;
+                    if (calories > 0) {
+                        trackerData.calories += calories;
+                        trackerData.history.push(`+ ${calories}kcal (Quick Add)`);
+                        updateTrackerDisplay(); // This function already exists
+                        saveTrackerData();      // This function already exists
+                        quickCalorieInput.value = '';
+                    }
+                });
+
+                quickRemoveCalorieBtn.addEventListener('click', () => {
+                    const calories = parseInt(quickCalorieInput.value) || 0;
+                    if (calories > 0) {
+                        trackerData.calories -= calories;
+                        if (trackerData.calories < 0) {
+                            trackerData.calories = 0; // Prevent negative
+                        }
+                        trackerData.history.push(`- ${calories}kcal (Quick Remove)`);
+                        updateTrackerDisplay();
+                        saveTrackerData();
+                        quickCalorieInput.value = '';
+                    }
+                });
+                // --- Meal Modal Listeners ---
+                openMealModalBtn.addEventListener('click', () => mealModal.classList.add('open'));
+                closeMealModalBtn.addEventListener('click', () => mealModal.classList.remove('open'));
+                mealModal.addEventListener('click', (e) => {
+                    if (e.target === mealModal) mealModal.classList.remove('open');
+                });
+
+                addMealForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const calories = parseInt(mealCaloriesInput.value) || 0;
+                    const protein = parseInt(mealProteinInput.value) || 0;
+                    const carbs = parseInt(mealCarbsInput.value) || 0;
+                    const fat = parseInt(mealFatInput.value) || 0;
+
+                    trackerData.calories += calories;
+                    trackerData.protein += protein;
+                    trackerData.carbs += carbs;
+                    trackerData.fat += fat;
+                    
+                    // Add to history
+                    trackerData.history.push(`+ ${calories}kcal, ${protein}g P, ${carbs}g C, ${fat}g F`);
+
+                    updateTrackerDisplay();
+                    saveTrackerData();
+                    
+                    addMealForm.reset();
+                    mealModal.classList.remove('open');
+                });
+
+                // --- Goals Modal Listeners ---
+                openGoalsModalBtn.addEventListener('click', () => {
+                    updateGoalDisplays(trackerData); // Ensure modal is populated
+                    goalsModal.classList.add('open');
+                });
+                closeGoalsModalBtn.addEventListener('click', () => goalsModal.classList.remove('open'));
+                goalsModal.addEventListener('click', (e) => {
+                    if (e.target === goalsModal) goalsModal.classList.remove('open');
+                });
+
+                setGoalsForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    trackerData.caloriesGoal = parseInt(goalCaloriesInput.value) || 2500;
+                    trackerData.proteinGoal = parseInt(goalProteinInput.value) || 150;
+                    trackerData.carbsGoal = parseInt(goalCarbsInput.value) || 300;
+                    trackerData.fatGoal = parseInt(goalFatInput.value) || 70;
+                    trackerData.waterGoal = parseInt(goalWaterInput.value) || 8;
+
+                    updateTrackerDisplay();
+                    saveTrackerData();
+                    updateGoalDisplays(trackerData); // Update profile page form too
+                    goalsModal.classList.remove('open');
+                });
+                
+                // --- Profile Page Goals Form Listener ---
+                // This form updates the *same* data as the goals modal
+                document.getElementById('profile-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    // Update goals
+                    trackerData.caloriesGoal = parseInt(document.getElementById('profile-goal-calories').value) || 2500;
+                    trackerData.proteinGoal = parseInt(document.getElementById('profile-goal-protein').value) || 150;
+                    trackerData.carbsGoal = parseInt(document.getElementById('profile-goal-carbs').value) || 300;
+                    trackerData.fatGoal = parseInt(document.getElementById('profile-goal-fat').value) || 70;
+                    trackerData.waterGoal = parseInt(document.getElementById('profile-goal-water').value) || 8;
+                    
+                    // Update user profile info (non-goal data)
+                    // In a real app, this would be saved to a database.
+                    // For now, we just save it to the allUsers object and re-save to localStorage
+                    currentUserAccount.profile = {
+                        goal: document.getElementById('profile-goal').value,
+                        activity: document.getElementById('profile-activity').value
+                    };
+                    allUsers[userEmail] = currentUserAccount;
+                    localStorage.setItem('nutriFitUsers', JSON.stringify(allUsers));
+
+                    // Save tracker data (which includes goals)
+                    updateTrackerDisplay();
+                    saveTrackerData();
+                    updateGoalDisplays(trackerData); // Update modal form too
+                    
+                    // Show success message
+                    const successMsg = document.getElementById('profile-save-success');
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 3000);
+                });
+
+                // Initial Load
+                loadTrackerData();
+            }
+
+
+            // ==========================================
+            // 8. WEIGHT CHART LOGIC
+            // (For 'Pro' & 'Premium' plans)
+            // ==========================================
+
+            /**
+             * Creates or updates a Chart.js weight chart.
+             * @param {string} canvasId - The ID of the canvas element.
+             * @param {boolean} isLargeChart - True if this is the large history page chart.
+             */
+            function initializeWeightChart(canvasId, isLargeChart = false) {
+                const ctx = document.getElementById(canvasId);
+                if (!ctx) return; // Don't run if canvas doesn't exist
+                
+                const weightLogKey = `nutriFitWeightLog_${userEmail}`;
+                const weightLog = JSON.parse(localStorage.getItem(weightLogKey)) || [];
+                
+                // Extract data for chart
+                const labels = weightLog.map(entry => {
+                    const [year, month, day] = entry.date.split('-');
+                    const d = new Date(year, month - 1, day);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                });
+                const data = weightLog.map(entry => entry.weight);
+
+                // Choose which chart instance to update
+                let chartInstance = isLargeChart ? weightChartLargeInstance : weightChartInstance;
+
+                // Destroy old chart if it exists
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                // Create new chart
+                chartInstance = new Chart(ctx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Weight (kg)',
+                            data: data,
+                            borderColor: '#8B5CF6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: { color: '#9ca3af' },
+                                grid: { color: '#374151' }
+                            },
+                            x: {
+                                ticks: { color: '#9ca3af' },
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+                
+                // Store the new instance
+                if (isLargeChart) {
+                    weightChartLargeInstance = chartInstance;
+                } else {
+                    weightChartInstance = chartInstance;
+                }
+            }
+
+            // Weight Log Form Listener
+            const weightLogForm = document.getElementById('weight-log-form');
+            if (weightLogForm) {
+                weightLogForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const weightInput = document.getElementById('weight-input');
+                    const weight = parseFloat(weightInput.value);
+                    
+                    if (weight > 0) {
+                        const todayStr = getTodayDateString();
+                        const weightLogKey = `nutriFitWeightLog_${userEmail}`;
+                        const weightLog = JSON.parse(localStorage.getItem(weightLogKey)) || [];
+                        
+                        // Check if already logged today - if so, update it
+                        const todayEntryIndex = weightLog.findIndex(entry => entry.date === todayStr);
+                        if (todayEntryIndex > -1) {
+                            weightLog[todayEntryIndex].weight = weight;
+                        } else {
+                            weightLog.push({ date: todayStr, weight: weight });
+                        }
+
+                        localStorage.setItem(weightLogKey, JSON.stringify(weightLog));
+                        weightInput.value = '';
+                        
+                        // Redraw BOTH charts
+                        initializeWeightChart('weightChart');
+                        if (document.getElementById('page-history').classList.contains('active')) {
+                            initializeWeightChart('weightChartLarge', true);
+                        }
+                    }
+                });
+            }
+            
+            // ==========================================
+            // 9. 'MY MEAL PLAN' PAGE LOGIC
+            // ==========================================
+            
+            const mealPlanTabs = document.querySelectorAll('.meal-plan-tab');
+            const mealPlanContents = document.querySelectorAll('.meal-plan-content');
+            
+            mealPlanTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    
+                    mealPlanTabs.forEach(t => t.classList.remove('active'));
+                    mealPlanContents.forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+
+            // ==========================================
+            // 10. 'PROGRESS HISTORY' STATS LOGIC
+            // ==========================================
+
+            function updateStats() {
+                const weightLogKey = `nutriFitWeightLog_${userEmail}`;
+                const weightLog = JSON.parse(localStorage.getItem(weightLogKey)) || [];
+                
+                // Days Tracked (just count entries in weight log)
+                document.getElementById('stat-days-tracked').textContent = weightLog.length;
+                
+                // Workouts Logged (This is a demo, we'll just show a static number)
+                // In a real app, you'd pull this from a separate log.
+                document.getElementById('stat-workouts').textContent = 12; // Demo number
+                
+                // Weight Change
+                if (weightLog.length > 1) {
+                    const startWeight = weightLog[0].weight;
+                    const currentWeight = weightLog[weightLog.length - 1].weight;
+                    const change = (currentWeight - startWeight).toFixed(1);
+                    const weightChangeEl = document.getElementById('stat-weight-change');
+                    weightChangeEl.textContent = `${change > 0 ? '+' : ''}${change} kg`;
+                    weightChangeEl.style.color = change > 0 ? '#F87171' : (change < 0 ? '#34D399' : '#FFF');
+                }
+            }
+            
+            // --- End of DOMContentLoaded ---
+        });
+    </script>
+    </body>
+</html>

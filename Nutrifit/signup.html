@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriFit - Sign Up</title>
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="stylesheet" href="style.css"> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            /* Kept your base styles */
+            background-color: #000000; /* Deep black */
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 80px; 
+        }
+        .font-bebas {
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .login-container {
+            background-color: #111; 
+            padding: 40px;
+            border-radius: 8px;
+            /* Changed shadow to violet */
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            width: 350px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #8B5CF6; /* Changed to violet */
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #e5e7eb;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            box-sizing: border-box; 
+            background-color: #222;
+            color: white;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8B5CF6; /* Changed to violet */
+            /* Changed shadow to violet */
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5);
+        }
+
+        .login-btn {
+            background-color: #7c3aed; /* Changed to violet-600 */
+            color: white; /* Changed to white for contrast */
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: none;
+        }
+
+        .login-btn:hover {
+            background-color: #8B5CF6; /* Changed to violet-500 */
+        }
+        
+        .back-link {
+            margin-top: 20px;
+            display: block;
+            color: #8B5CF6; /* Changed to violet */
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .header-nav a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-logout { 
+            background-color: #dc2626; 
+            transition: background-color 0.3s;
+        }
+        .btn-logout:hover {
+            background-color: #ef4444;
+        }
+        .error-message {
+            color: #dc2626;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="bg-black/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-bebas tracking-wider text-violet-400">NutriFit</a>
+            <nav class="hidden md:flex items-center space-x-8 header-nav">
+                <a href="index.html#plans" class="text-gray-300 hover:text-violet-400 transition duration-300">Our Plans</a>
+                <a href="index.html#calculators" class="text-gray-300 hover:text-violet-400 transition duration-300">Calculators</a>
+                <a href="index.html#about" class="text-gray-300 hover:text-violet-400 transition duration-300">About</a>
+                <a href="index.html#contact" class="text-gray-300 hover:text-violet-400 transition duration-300">Contact</a>
+            </nav>
+
+            <div id="auth-buttons" class="auth-buttons flex items-center space-x-4">
+                <a id="login-btn" href="login.html" class="bg-gray-800 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-gray-700 transition duration-300">
+                    Login
+                </a>
+                <a id="signup-btn" href="signup.html" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-violet-500 transition duration-300">
+                    Sign Up
+                </a>
+                
+                <a id="profile-btn" href="dashboard.html" class="bg-violet-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-violet-500 transition duration-300 hidden">
+                    <i class="fas fa-user-circle mr-2"></i>Profile
+                </a>
+                <a id="logout-btn" href="#" class="bg-red-600 text-white font-bold py-2 px-4 rounded-full text-sm uppercase tracking-wider hover:bg-red-500 transition duration-300 btn-logout hidden">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            
+            <button class="md:hidden text-white">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <h2>Create Account</h2>
+        <form id="signup-form" onsubmit="handleSignUp(event)"> 
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Register</button>
+            <p id="signup-error" class="error-message hidden">Passwords do not match.</p>
+        </form>
+        <a href="login.html" class="back-link">Already have an account? Log In</a>
+    </div>
+    
+    <script>
+        function handleSignUp(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const errorElement = document.getElementById('signup-error');
+
+            if (password !== confirmPassword) {
+                errorElement.innerText = 'Passwords do not match.';
+                errorElement.classList.remove('hidden');
+                return;
+            }
+
+            // 2. Get existing users (Updated to 'nutriFitUsers')
+            const users = JSON.parse(localStorage.getItem('nutriFitUsers')) || {};
+
+            if (users[email]) {
+                errorElement.innerText = 'An account with this email already exists.';
+                errorElement.classList.remove('hidden');
+                return;
+            }
+
+            // 4. Add the new user
+            users[email] = { 
+                username: username, 
+                password: password 
+            };
+
+            // 5. Save (Updated to 'nutriFitUsers')
+            localStorage.setItem('nutriFitUsers', JSON.stringify(users));
+            
+            errorElement.classList.add('hidden');
+            
+            // Send them to the login page
+            window.location.href = 'login.html'; 
+        }
+        
+        // --- HEADER BUTTON VISIBILITY LOGIC ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            const profileBtn = document.getElementById('profile-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (isLoggedIn) {
+                if (loginBtn) loginBtn.classList.add('hidden');
+                if (signupBtn) signupBtn.classList.add('hidden');
+                if (profileBtn) profileBtn.classList.remove('hidden');
+                if (logoutBtn) logoutBtn.classList.remove('hidden');
+            } else {
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (signupBtn) signupBtn.classList.remove('hidden');
+                if (profileBtn) profileBtn.classList.add('hidden');
+                if (logoutBtn) logoutBtn.classList.add('hidden');
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    localStorage.setItem('isLoggedIn', 'false');
+                    localStorage.removeItem('currentUser'); 
+                    window.location.href = 'index.html'; 
+                });
+            }
+        });
+    </script>
+</body>
+</html>
